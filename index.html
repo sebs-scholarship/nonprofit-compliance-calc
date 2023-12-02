@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SSF Nonprofit Compliance Calculator</title>
+    <style>
+      body {
+        font-family: "Montserrat", Arial, sans-serif;
+        text-align: center;
+      }
+      div {
+        display: inline-block;
+        text-align:center;
+        width: 50%;
+      }
+      p {
+        color: #5D6369;
+      }
+      input {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 1rem auto;
+      }
+      a {
+        color: #800000;
+      }
+    </style>
+</head>
+<body>
+<div>
+    <h1>SSF Nonprofit Compliance Calculator</h1>
+    <p>Total Income</p>
+    <input type="number" id="total" min="1" oninput="(validity.valid || (value='')) && deriveFromTotal()"><br>
+    <p>Maximum Large Donations</p>
+    <input type="number" id="large" min="1" oninput="(validity.valid || (value='')) && deriveFromLarge()"><br>
+    <p>Minimum Small Donations</p>
+    <input type="number" id="small" min="1" oninput="(validity.valid || (value='')) && deriveFromSmall()"><br>
+    <p>Large Donation Threshold</p>
+    <input type="number" id="threshold" min="1" oninput="(validity.valid || (value='')) && deriveFromThreshold()"><br>
+</div>
+<script src='decimal.js'></script>
+<script>
+    function round(val) {
+        return val.mul(100).round().div(100)
+    }
+
+    function updateFields(total, large, small, threshold) {
+        document.getElementById("total").value = round(total).toString()
+        document.getElementById("large").value = round(large).toString()
+        document.getElementById("small").value = round(small).toString()
+        document.getElementById("threshold").value = round(threshold).toString()
+    }
+
+    function deriveFromTotal() {
+        let total = new Decimal(document.getElementById("total").value)
+        let small = total.div(3)
+        let large = total.sub(small)
+        let threshold = total.div(50)
+
+        updateFields(total, large, small, threshold)
+    }
+
+    function deriveFromLarge() {
+        let large = new Decimal(document.getElementById("large").value)
+        let small = large.div(2)
+        let total = large.add(small)
+        let threshold = total.div(50)
+
+        updateFields(total, large, small, threshold)
+    }
+
+    function deriveFromSmall() {
+        let small = new Decimal(document.getElementById("small").value)
+        let large = small.mul(2)
+        let total = large.add(small)
+        let threshold = total.div(50)
+
+        updateFields(total, large, small, threshold)
+    }
+
+    function deriveFromThreshold() {
+        let threshold = new Decimal(document.getElementById("threshold").value)
+        let total = threshold.mul(50)
+        let small = total.div(3)
+        let large = total.sub(small)
+
+        updateFields(total, large, small, threshold)
+    }
+</script>
+</body>
+</html>
